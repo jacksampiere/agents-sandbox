@@ -1,0 +1,13 @@
+[project]
+name = "ml-experiment-explorer"
+version = "0.1.0"
+description = "Agent that reads ML experiment artifacts and recommends next steps"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "anthropic>=0.25.0",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.6.0",
+]
