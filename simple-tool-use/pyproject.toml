@@ -1,0 +1,13 @@
+[project]
+name = "simple-tool-use"
+version = "0.1.0"
+description = "Simple tool use agent with custom tools"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "anthropic==0.94.0",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.6.0",
+]

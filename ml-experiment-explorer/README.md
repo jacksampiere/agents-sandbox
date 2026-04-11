@@ -15,12 +15,15 @@ An agent that reads local ML experiment artifacts, reasons across the full set o
 
 ## Usage
 
-```bash
+```shell
+# Install env
+uv sync --active
+
 # Generate mock experiments (first time)
-uv run python scripts/generate_mocks.py
+python scripts/generate_mocks.py
 
 # Run the agent
-ANTHROPIC_API_KEY=<your-key> uv run python scripts/analyze.py
+ANTHROPIC_API_KEY=<your-key> python scripts/analyze.py
 ```
 
 The report is written to `reports/` and also printed to stdout.
