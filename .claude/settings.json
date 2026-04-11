@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs -I{} sh -c 'case \"{}\" in *.py) ruff format \"{}\" ;; *.ts|*.tsx|*.js) npx prettier --write \"{}\" ;; esac'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/safety_check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

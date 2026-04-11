@@ -1,6 +1,10 @@
 # Project specifics
 ml-experiment-explorer/experiments/
 
+# Local agent preferences
+**/CLAUDE.local.md
+.claude/settings.local.json
+
 # Python
 __pycache__/
 *.py[cod]
@@ -23,7 +27,6 @@ ENV/
 
 # uv
 .uv/
-uv.lock
 
 # Testing
 .pytest_cache/

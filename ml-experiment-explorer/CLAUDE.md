@@ -1,6 +1,6 @@
 # ml-experiment-explorer
 
-An agent that reads local ML experiment artifacts, reasons across the full set of runs, and produces a written report recommending what to try next.
+An agent that reads local ML experiment artifacts, reasons across the full set of runs, and produces a written report with recommended next steps.
 
 ## Experiment schema
 ```

@@ -13,8 +13,8 @@ The goal isn't the task itself but to demonstrate what the loop exposes: how too
 ## Usage
 
 ```shell
-# Install env
-uv sync --active
+# Install env; restores pinned deps from committed uv.lock
+uv sync
 
 # Run the agent
 ANTHROPIC_API_KEY=<your-key> python agent.py
