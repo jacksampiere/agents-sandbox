@@ -4,6 +4,7 @@ ml-experiment-explorer/experiments/
 # Local agent preferences
 **/CLAUDE.local.md
 .claude/settings.local.json
+.claude/skills/task-observer
 
 # Python
 __pycache__/
