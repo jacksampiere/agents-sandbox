@@ -1,0 +1,35 @@
+[project]
+name = "eeg-embedding-explorer"
+version = "0.1.0"
+description = "Qualitative explorer for pretrained EEG foundation-model embeddings."
+requires-python = ">=3.12, <3.13"
+# Light dependency set — sufficient for the synthetic Gates 0–2 run.
+# torch + braindecode are intentionally NOT here; they are added at Gate 3 (real adapters).
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scikit-learn",
+    "numba>=0.60",
+    "llvmlite>=0.43",
+    "umap-learn",
+    "streamlit",
+    "plotly",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.uv]
+package = false
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
