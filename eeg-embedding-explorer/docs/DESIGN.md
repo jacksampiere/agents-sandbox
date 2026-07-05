@@ -5,9 +5,7 @@
 
 ## 1. Goal and scope
 
-This is a Python data-visualization / ML-tooling engineering task: build a Streamlit+Plotly dashboard and a NumPy/scikit-learn pipeline over **precomputed embedding vectors (opaque float32 arrays)**. There is no clinical inference and no diagnostic or wet-lab component — the vectors are treated as generic numeric data for dimensionality reduction, plotting, and caching.
-
-Build a dashboard that lets a human qualitatively explore representations produced by pretrained time series foundation models, colored by downstream-task labels and subject/record metadata. The purpose is **qualitative inspection of embedding geometry** — a visualization/QA aid, not benchmarking: surface where representations separate by some label so the user knows what to investigate further.
+Build a dashboard that lets a human qualitatively explore representations produced by pretrained EEG foundation models, colored by downstream-task labels and subject/record metadata. The purpose is **hypothesis generation**, not benchmarking: surface where representations separate by some label so the user knows what to investigate further.
 
 In scope for v1:
 - A Streamlit + Plotly dashboard that loads precomputed embeddings and renders an interactive 2D scatter (3D as a secondary toggle), colored by a selectable label set, at a selectable granularity, with a selectable pooling rule and projection method.

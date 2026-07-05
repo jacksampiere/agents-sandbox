@@ -4,8 +4,6 @@
 
 ## 0. Before you do anything else
 
-This is a Python data-visualization / ML-tooling engineering task: a Streamlit+Plotly dashboard and a NumPy/scikit-learn pipeline over **precomputed embedding vectors (opaque float32 arrays)**. There is no clinical inference and no diagnostic or wet-lab component — the vectors are generic numeric data for dimensionality reduction, plotting, and caching.
-
 **First action — verify prerequisites, before any planning or reasoning.** Read this whole document and `docs/DESIGN.md`, then confirm every item in §1 exists. If anything is missing, contradictory, or ambiguous, **stop and surface it as questions for me to answer interactively** (in-session), not as a wall of text — do not guess, do not work around it, do not start planning against a missing prerequisite. Only once §1 checks out, proceed to §5 (plan mode).
 
 ## 1. Prerequisites (fixed; do not modify)
