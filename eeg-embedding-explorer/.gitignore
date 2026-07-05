@@ -1,1 +1,3 @@
+# Ignore model weights, retain manifest
 weights/*
+!weights/MANIFEST.md

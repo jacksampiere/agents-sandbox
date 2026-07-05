@@ -15,6 +15,8 @@ Streamlit + Plotly dashboard for qualitatively exploring pretrained EEG foundati
 - **Always render PCA alongside UMAP/t-SNE** and surface projection params. It is the honesty guardrail.
 - **No network for weights, no dependency upgrades, no fabricated data.** If blocked, stop and report.
 
+When docs conflict, prefer the active gate scope in `docs/BUILD_SPEC.md`, then `docs/DESIGN.md`, then `weights/MANIFEST.md` for encoder-specific facts. Do not silently resolve ambiguous encoder windowing granularity behavior: either ask the user if it could affect shapes, registry facts, adapter outputs, or dependency scope, or document any assumptions in `docs/HANDOFF.md` if the current gate can continue safely. If you make an assumption that allows the current gate to continue, record it in docs/HANDOFF.md and update the relevant docs.
+
 ## Structure
 
 - `src/` — pipeline + dashboard (created by the build)

@@ -28,9 +28,30 @@ The conceptual crux. Do not treat the dashboard as "one scatter, recolor by labe
 - `record` is one recording (one night).
 - `subject` is one person. With ~1 record per subject in the demo set, record and subject nearly coincide, but keep them distinct in the model.
 
-**30s epoch normalization (tile + pool, not center):** for an encoder whose native window is shorter than 30s (e.g. LaBraM segments, BENDR window), run the encoder over the native windows tiling the 30s epoch and mean-pool the sub-embeddings into one 30s vector. CBraMod is 30s-native (single pass). Intra-epoch sub-window pooling is an adapter implementation detail (default mean), not a user-facing control. For encoders whose native window covers a sub-30s span but that accept a batched sequence of sub-windows in one forward call (e.g. CBraMod, LaBraM), tiling means constructing that batched input, not looping the model per sub-window — this preserves any cross-window attention the model performs internally. Pooling to one 30s vector is applied to that call's per-patch output.
+**30s epoch normalization:** every adapter emits exactly one embedding vector per normalized
+30s epoch. Distinguish the adapter's project-level epoch input from the model's internal patch
+or pretraining crop length:
 
-**Encoder-declared finest granularity:** each encoder declares, in the registry, the finest granularity it can serve. An encoder whose native window exceeds 30s is registered as record-level and does not offer epoch-grain views; the UI only exposes (granularity, label) combinations it can serve. The starting trio all support epoch grain.
+- `epoch_input_s` is the raw time span consumed by the project adapter to produce one epoch
+  embedding. For the starting trio, this is 30s.
+- `patch_s` is an internal model patch/sub-window size, when applicable. CBraMod and LaBraM
+  operate over 1s patches, but the adapter should construct the model's full 30-patch input
+  and run it in one forward call, not loop over 30 independent model calls.
+- `pretraining_crop_s` records the original crop/window length used in pretraining when that
+  differs from the project adapter input. This is provenance only unless the adapter explicitly
+  requires it.
+
+For models that return multiple patch/sub-window embeddings for a 30s epoch, the adapter pools
+those outputs to one 30s vector, defaulting to mean pooling. This intra-epoch pooling is an
+adapter implementation detail, not a user-facing control. Do not center-crop a shorter model
+window from the epoch; tile/pack the full 30s epoch according to the model's expected forward
+input.
+
+**Encoder-declared finest granularity:** each encoder declares, in the registry, the finest
+granularity it can serve. An encoder whose required `epoch_input_s` exceeds 30s is registered
+as record-level and does not offer epoch-grain views; the UI only exposes (granularity, label)
+combinations it can serve. The starting trio all support epoch grain because their project
+adapters emit one vector per 30s epoch.
 
 **Label granularity and the broadcast rule:** every label carries a native granularity — sleep stage / arousal / apnea event are epoch-level; recording metadata (e.g. AHI) is record-level; age / sex / disease class / medication are subject-level. A label may color points at its native granularity **or any finer granularity by broadcasting down** (every epoch inherits its subject's age). It may not be applied at a coarser granularity without aggregation (generally meaningless for categoricals). The point set is determined by the chosen granularity; the projection is refit per (encoder, granularity); and the UI states the point count explicitly (e.g. "8,142 epoch points" vs "10 subject points") so the granularity change is visible rather than disguised as a recolor.
 
@@ -98,7 +119,7 @@ Starting trio (open weights, CPU-feasible):
 - [**BENDR**](https://arxiv.org/abs/2101.12037) (2021) — contrastive; provides the loss-type contrast against the reconstruction models.
 - [**LaBraM**](https://arxiv.org/abs/2405.18765) (ICLR 2024) — masked neural-code prediction; short channel-patch segments pooled up to 30s.
 
-**Adapter contract (the interface every encoder implements):** given a raw EEG segment, an adapter must resample to the model's rate, select/reorder channels to the model's montage, window to the encoder's native window tiling the 30s epoch, run the forward pass, and pool sub-windows to a single 30s epoch vector of shape `(D,)`. Adapters register with: name, native window length, sampling rate, expected montage, embedding dim, finest supported granularity, loss type, and pretraining datasets. **These registry facts are sourced from `weights/MANIFEST.md`** (staged by hand; see BUILD_SPEC §1). A no-op dummy adapter returning random embeddings of correct shape is the first one built (tests the contract and the dashboard before any real model).
+**Adapter contract (the interface every encoder implements):** given a raw EEG segment, an adapter must resample to the model's sample rate, select/reorder channels to the model's montage, window to the encoder's native window tiling the 30s epoch, run the forward pass, and pool sub-windows to a single 30s epoch vector of shape `(D,)`. Adapters register with: name, embedding dim, native window length, windowing approach (single-pass vs. tile+pool), sampling rate, expected montage, finest supported granularity, loss type, and pretraining datasets. **These registry facts are sourced from `weights/MANIFEST.md`** (staged by hand; see BUILD_SPEC §1). A no-op dummy adapter returning random embeddings of correct shape is the first one built (tests the contract and the dashboard before any real model).
 
 **What is required vs. open:** the adapter contract, the registry, and the precompute pipeline are required and prescribed here. Whether the reusable pieces are expressed as Claude Code skills/subagents or as plain code is left open — for a single autonomous run, plain code is fine; the harness authoring is a separate exercise (§7).
 

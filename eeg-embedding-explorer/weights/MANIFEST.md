@@ -22,9 +22,12 @@ the adapter; pass the channel list actually present in the source data at call t
 ## cbramod
 
 - embedding_dim: 200
-- native_window_s: 30
-- windowing: single-pass # feed as (batch, n_channels, 30, 200) — 30 one-second patches in one forward call, not 30 separate calls
+- epoch_input_s: 30
+- native_window_s: 30  # backward-compatible alias for epoch_input_s
+- patch_s: 1
 - sampling_rate_hz: 200
+- windowing: single-pass
+- windowing_note: feed as (batch, n_channels, 30, 200) — 30 one-second patches in one forward call, not 30 separate calls
 - expected_montage: channel-adaptive (ACPE); pass the channel-name list present in the source data at call time.
 SHHS supplies only C3, C4 — feed those two. Reference full-10-20 list (not required, non-SHHS use only):
 [Fp1, Fp2, F7, F3, Fz, F4, F8, T3, C3, Cz, C4, T4, T5, P3, Pz, P4, T6, O1, O2]
@@ -40,9 +43,11 @@ SHHS supplies only C3, C4 — feed those two. Reference full-10-20 list (not req
 ## bendr
 
 - embedding_dim: 512  # extract the transformer's contextualized output (start-token / aggregate), not the raw conv-stage vectors. OPEN ITEM: confirm at Gate 3 whether this output is 512-dim (== encoder_h) or the internal transformer width — don't assume; let the smoke test's shape assertion catch a mismatch.
-- native_window_s: 30  # project adapter emits one vector per normalized 30s epoch; original pretraining crop was 60s but BENDR is architecturally flexible
-- pretraining_crop_s: 60
+- epoch_input_s: 30
+- native_window_s: 30  # backward-compatible alias for epoch_input_s
+- patch_s: null
 - windowing: single-pass
+- windowing_note: original BENDR pretraining used longer crops, but this adapter consumes 30s epochs
 - sampling_rate_hz: 256
 - expected_montage: DN3 Deep1010 fixed channel-slot mapping — VERIFIED, 90 channels total, fixed order:
 indices 0-76 EEG (77 slots, unifies old/new 10-20 naming e.g. both T3 and T7 present),
@@ -77,8 +82,11 @@ worth remembering if BENDR's SHHS embeddings look off relative to CBraMod/LaBraM
 ## labram
 
 - embedding_dim: 200  # LaBraM-Base; Large=400, Huge=800
-- native_window_s: 1  # 1-second channel patches, 200 samples/patch
-- windowing: single-pass  # feed 30 patches (6000 samples) in one forward call for a 30s epoch; within the model's 256-patch max
+- epoch_input_s: 30
+- native_window_s: 30  # backward-compatible alias for project adapter input; do not smoke-test only 1s
+- patch_s: 1
+- windowing: single-pass
+- windowing_note: feed 30 one-second patches / 6000 samples in one forward call for a 30s epoch; pool per-patch outputs to one 30s vector if needed
 - sampling_rate_hz: 200
 - expected_montage: channel-adaptive (flexible channel patches with spatial embeddings); pass the channel-name list present in the source data at call time. SHHS supplies only C3, C4.
 - finest_granularity: epoch
