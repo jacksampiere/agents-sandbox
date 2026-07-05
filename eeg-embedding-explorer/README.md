@@ -10,14 +10,20 @@ colored by labels/metadata at epoch/record/subject granularity.
 ## Quick start
 
 ```bash
-
 # from inside this directory
-uv sync
-uv run pytest -q
-uv run streamlit run src/app.py   # after the build
+uv sync                                                   # install pinned deps (creates the venv)
+uv run pytest -q                                          # run the test suite
+
+# Build the synthetic embedding caches (deterministic, from a fixed seed).
+# PYTHONPATH=src because the package lives under src/ and is not installed ([tool.uv] package=false).
+PYTHONPATH=src uv run python -m eeg_explorer.precompute
+
+uv run streamlit run src/app.py                           # launch the dashboard → http://localhost:8501
 ```
 
-The precompute pipeline and real-data runbook will be documented here once Gate 4 is built.
+The synthetic `cache/` and `labels.parquet` are **generated artifacts (git-ignored)** — they
+regenerate deterministically from the seed in `src/eeg_explorer/synthetic.py`, so a fresh clone just
+runs the precompute step above before launching the dashboard.
 
 ## Model weights
 

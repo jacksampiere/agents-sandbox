@@ -1,3 +1,7 @@
 # Ignore model weights, retain manifest
 weights/*
 !weights/MANIFEST.md
+
+# Synthetic caches + labels are generated from a fixed seed by precompute
+cache/
+labels.parquet
